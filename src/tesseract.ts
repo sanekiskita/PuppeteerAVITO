@@ -13,12 +13,12 @@ function recognize(file, lang, logger) {
 function updateProgress(data) {}
 
 // Вывод результата
-function setResult(text) {
+function setResult(text:string):string {
   text = text.replace(/\r?\n|\r/g, "");
   return text;
 }
 
-export default function (imgScr:string) {
+export default function (imgScr:string):string {
   if (!imgScr) return "нет картинки";
 
   return recognize(imgScr, "rus", updateProgress).then(setResult);
