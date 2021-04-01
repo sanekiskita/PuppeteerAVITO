@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const puppeteer = require("puppeteer-extra");
+const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const setting = require("./settings");
 const authorization_1 = require("./authorization");
@@ -25,7 +25,7 @@ function startPuppeteer() {
         try {
             if (setting.passAuthorization) {
                 yield page.goto(setting.link, {
-                    waitUntil: "load",
+                    waitUntil: 'load',
                     timeout: 0,
                 });
                 yield authorization_1.default(page, setting.login, setting.password);

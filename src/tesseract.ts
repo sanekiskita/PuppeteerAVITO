@@ -18,6 +18,12 @@ function setResult(text:string):string {
   return text;
 }
 
+/**
+ * Возвращает данные с картинки (текст русский) 
+ *
+ * @param  imgScr ссылка на картинку
+ * @return  текст с картинки.
+ */
 export default function (imgScr:string):string {
   if (!imgScr) return "нет картинки";
 

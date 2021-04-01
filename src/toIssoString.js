@@ -1,18 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function default_1(strdate) {
-    let arrdate = strdate.split(" ");
-    arrdate.push(arrdate.pop().split(":"));
-    let index = arrdate.indexOf("в");
+    let arrdate = strdate.split(' ');
+    arrdate.push(arrdate.pop().split(':'));
+    let index = arrdate.indexOf('в');
     if (index > -1)
         arrdate.splice(index, 1);
     const datenow = new Date();
     switch (arrdate[0]) {
-        case "Сегодня":
+        case 'Сегодня':
             datenow.setHours(arrdate[1][0]);
             datenow.setMinutes(arrdate[1][1]);
             break;
-        case "Вчера":
+        case 'Вчера':
             datenow.setDate(datenow.getDate() - 1);
             datenow.setHours(arrdate[1][0]);
             datenow.setMinutes(arrdate[1][1]);
@@ -27,22 +27,20 @@ function default_1(strdate) {
     return date.toISOString();
 }
 exports.default = default_1;
-;
 function getMonthFromString(month1) {
     var months = [
-        "янв",
-        "фев",
-        "мар",
-        "апр",
-        "май",
-        "июн",
-        "июл",
-        "авг",
-        "сен",
-        "окт",
-        "ноя",
-        "дек",
+        'янв',
+        'фев',
+        'мар',
+        'апр',
+        'май',
+        'июн',
+        'июл',
+        'авг',
+        'сен',
+        'окт',
+        'ноя',
+        'дек',
     ];
     return months.indexOf(month1);
-    ;
 }

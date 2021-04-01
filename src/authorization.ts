@@ -1,5 +1,12 @@
 //import randomInteger from './randomInteger'
 
+/**
+ * авторизация на сайте.
+ *
+ * @param  login логин.
+ * @param  password пароль.
+ * @return  void
+ */
 export default async function authorization (page , login: string , password: string ) {
     try{
 
