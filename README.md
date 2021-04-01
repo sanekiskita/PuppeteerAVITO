@@ -16,3 +16,7 @@
 ![image](https://user-images.githubusercontent.com/56951952/112996053-8182d100-9174-11eb-903c-9e66d7767e0e.png)
 
 ## Программа сама проходит авторизацию ✓
+
+запуск:
+tsc-w
+node index.js
