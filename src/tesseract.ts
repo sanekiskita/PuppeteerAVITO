@@ -13,7 +13,7 @@ function recognize(file, lang, logger) {
 function updateProgress(data) {}
 
 // Вывод результата
-function setResult(text:string):string {
+function setResult(text) {
   text = text.replace(/\r?\n|\r/g, "");
   return text;
 }

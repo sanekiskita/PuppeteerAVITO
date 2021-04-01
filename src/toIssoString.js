@@ -24,8 +24,7 @@ function default_1(strdate) {
             datenow.setMinutes(arrdate[2][1]);
     }
     let date = new Date(datenow.getFullYear(), datenow.getMonth(), datenow.getDate(), datenow.getHours(), datenow.getMinutes(), 0, 0);
-    date.toISOString();
-    return date;
+    return date.toISOString();
 }
 exports.default = default_1;
 ;

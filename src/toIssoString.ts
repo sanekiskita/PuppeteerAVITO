@@ -32,10 +32,8 @@ export default function (strdate) {
       0,
       0
     );
-    date.toISOString();
-    //if (date == "Invalid Date") return "error";
   
-    return date;
+    return date.toISOString();
   };
   
   function getMonthFromString(month1:string):number {
