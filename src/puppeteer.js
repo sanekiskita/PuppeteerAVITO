@@ -22,15 +22,20 @@ function startPuppeteer() {
         const browser = yield puppeteer.launch(setting.browser);
         let page = yield browser.newPage();
         yield page.setBypassCSP(true);
+        let sessid;
         try {
+            yield page.goto(setting.link, {
+                waitUntil: 'load',
+                timeout: 0,
+            });
             if (setting.passAuthorization) {
-                yield page.goto(setting.link, {
-                    waitUntil: 'load',
-                    timeout: 0,
-                });
-                yield authorization_1.default(page, setting.login, setting.password);
+                if (!!setting.password.length || !!setting.login.length) {
+                    sessid = yield authorization_1.default(page, setting.login, setting.password);
+                }
+                else
+                    throw new Error("Логин или пароль отсутствуют");
             }
-            data = yield data_ollection_1.default(setting, page, browser);
+            data = yield data_ollection_1.default(setting, page, puppeteer, sessid);
         }
         catch (e) {
             console.log(e);

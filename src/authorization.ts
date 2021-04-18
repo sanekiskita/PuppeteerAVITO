@@ -5,18 +5,20 @@
  *
  * @param  login логин.
  * @param  password пароль.
- * @return  void
+ * @return sessid - id подключения 
  */
 export default async function authorization (page , login: string , password: string ) {
+    let sessid:String;
+    let aut:boolean = false;
     try{
 
     await page.click("a[data-marker='header/login-button']");
 
      await page.focus('input[name=login]');
-      await page.keyboard.type(login, { delay: 100 });
+      await page.keyboard.type(login, { delay: 10 });
 
       await page.keyboard.press('Tab');
-      await page.keyboard.type(password, { delay: 100 });
+      await page.keyboard.type(password, { delay: 10 });
 
       await page.keyboard.press('Tab');
       await page.keyboard.press('Tab');
@@ -25,22 +27,27 @@ export default async function authorization (page , login: string , password: st
       await page.keyboard.press('Tab');
       await page.keyboard.press('Enter');
 
-      //Проверка авторизации
-      let aut:boolean = false;
       do {
-        await page.waitForTimeout(10000);
-        const cookiesSet = await page.cookies(
+        await page.waitForTimeout(1000);
+        const cookies = await page.cookies(
           "https://www.avito.ru"
         );
+        
         if (
-          cookiesSet.filter((item: { name: string; value: string; }) => item.name == "auth" && item.value == "1")
+          cookies.filter((item: { name: string; value: string; }) => item.name == "auth" && item.value == "1")
+            .length && cookies.filter((item: { name: string; value: string; }) => item.name == "sessid")
             .length
-        )
+        ){
           aut = true;
+          sessid=cookies.filter((item: { name: string; value: string; }) => item.name == "sessid")[0].value;
+          console.log("sessid:"+sessid);
+          }else{
+            console.log("авторизация не прошла!!!");
+          }
 
-        if (!aut) console.log("авторизация не прошла!!!");
-      } while (!aut);
+      } while (!aut);   
       console.log("авторизация прошла");
+      return sessid;
     }catch(e){
         throw new Error("ошибка в авторизации");
     }

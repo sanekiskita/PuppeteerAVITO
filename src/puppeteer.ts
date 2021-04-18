@@ -28,15 +28,19 @@ export default async function startPuppeteer() {
     const browser = await puppeteer.launch(setting.browser);
     let page = await browser.newPage();
     await page.setBypassCSP(true);
+    let sessid;
     try {
-        if (setting.passAuthorization) {
-            await page.goto(setting.link, {
-                waitUntil: 'load',
-                timeout: 0,
-            });
-            await authorization(page, setting.login, setting.password);
+        await page.goto(setting.link, {
+            waitUntil: 'load',
+            timeout: 0,
+        });
+        if(setting.passAuthorization){
+        if (!!setting.password.length||!!setting.login.length) {
+             sessid = await authorization(page, setting.login, setting.password);
         }
-        data = await dataСollection(setting, page, browser);
+        else throw new Error("Логин или пароль отсутствуют");   
+        }
+        data = await dataСollection(setting, page, puppeteer, sessid);        
     } catch (e) {
         console.log(e);
     } finally {
