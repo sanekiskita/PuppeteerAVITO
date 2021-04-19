@@ -18,5 +18,5 @@
 ## Программа сама проходит авторизацию ✓
 
 запуск:
-tsc-w
-node index.js
+1. npm install
+2. node index.js
