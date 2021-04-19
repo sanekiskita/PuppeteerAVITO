@@ -16,7 +16,7 @@ function dataCollection(setting, page, puppeteer, sessid) {
     return __awaiter(this, void 0, void 0, function* () {
         let flag = true;
         let counter = 1;
-        let data = [];
+        const data = [];
         const passAuthorization = setting.passAuthorization;
         const cluster = yield Cluster.launch({
             puppeteerOptions: {
@@ -117,7 +117,7 @@ function dataCollection(setting, page, puppeteer, sessid) {
                 console.log('ошибка у окна ' + (yield page.url()));
             }
             finally {
-                console.log(data[data.length - 1].phone);
+                console.log("phone " + data[data.length - 1].phone);
             }
         }));
         if (setting.maxContent <= 0) {

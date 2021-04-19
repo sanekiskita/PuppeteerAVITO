@@ -42,8 +42,8 @@ function startPuppeteer() {
         }
         finally {
             yield browser.close();
-            return data;
         }
+        return data;
     });
 }
 exports.default = startPuppeteer;

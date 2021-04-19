@@ -16,7 +16,7 @@ interface Advert {
     phone: string;
 }
 
-type ArrayAdvert = Array<Advert>
+type ArrayAdvert = Advert[]
 /**
  * Возвращает массив с данными.
  *
@@ -45,6 +45,6 @@ export default async function startPuppeteer() {
         console.log(e);
     } finally {
         await browser.close();
-        return data;
     }
+    return data;
 }

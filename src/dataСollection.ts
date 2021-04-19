@@ -13,7 +13,7 @@ interface Advert {
     phone: string;
 }
 
-interface ArrayAdvert extends Array<Advert> {}
+type ArrayAdvert = Advert[];
 
 /**
  * обрабатывает страницы для получения данных
@@ -26,7 +26,7 @@ interface ArrayAdvert extends Array<Advert> {}
 export default async function dataCollection(setting, page, puppeteer,sessid) {
     let flag: boolean = true
     let counter: number = 1;
-    let data: ArrayAdvert = [];
+    const data: ArrayAdvert = [];
     const passAuthorization = setting.passAuthorization;
 
     const cluster = await Cluster.launch({
@@ -138,7 +138,7 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
                     console.log(e);
                     console.log('ошибка у окна '+ await page.url());
                 } finally {
-                    console.log(data[data.length - 1].phone);
+                    console.log("phone "+data[data.length - 1].phone);
                 }
       });
 
