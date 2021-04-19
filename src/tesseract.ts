@@ -1,16 +1,13 @@
 const Tesseract = require("tesseract.js");
 
 // Распознавание изображения
-function recognize(file, lang, logger) {
-  return Tesseract.recognize(file, lang, { logger }).then(
+function recognize(file, lang) {
+  return Tesseract.recognize(file, lang).then(
     ({ data: { text } }) => {
       return text;
     }
   );
 }
-
-// Отслеживание прогресса обработки
-function updateProgress(data) {}
 
 // Вывод результата
 function setResult(text:string):string {
@@ -19,7 +16,7 @@ function setResult(text:string):string {
 }
 
 /**
- * Возвращает данные с картинки (текст русский) 
+ * Возвращает данные с картинки (текст русский)
  *
  * @param  imgScr ссылка на картинку
  * @return  текст с картинки.
@@ -27,5 +24,5 @@ function setResult(text:string):string {
 export default function (imgScr:string):string {
   if (!imgScr) return "нет картинки";
 
-  return recognize(imgScr, "rus", updateProgress).then(setResult);
-};
+  return recognize(imgScr, "rus").then(setResult);
+}

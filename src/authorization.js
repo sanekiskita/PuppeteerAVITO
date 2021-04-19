@@ -27,11 +27,11 @@ function authorization(page, login, password) {
             do {
                 yield page.waitForTimeout(1000);
                 const cookies = yield page.cookies("https://www.avito.ru");
-                if (cookies.filter((item) => item.name == "auth" && item.value == "1")
-                    .length && cookies.filter((item) => item.name == "sessid")
+                if (cookies.filter((item) => item.name === "auth" && item.value === "1")
+                    .length && cookies.filter((item) => item.name === "sessid")
                     .length) {
                     aut = true;
-                    sessid = cookies.filter((item) => item.name == "sessid")[0].value;
+                    sessid = cookies.filter((item) => item.name === "sessid")[0].value;
                     console.log("sessid:" + sessid);
                 }
                 else {

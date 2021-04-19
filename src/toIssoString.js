@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function default_1(strdate) {
-    let arrdate = strdate.split(' ');
+    const arrdate = strdate.split(' ');
     arrdate.push(arrdate.pop().split(':'));
-    let index = arrdate.indexOf('в');
+    const index = arrdate.indexOf('в');
     if (index > -1)
         arrdate.splice(index, 1);
     const datenow = new Date();
@@ -23,12 +23,12 @@ function default_1(strdate) {
             datenow.setHours(arrdate[2][0]);
             datenow.setMinutes(arrdate[2][1]);
     }
-    let date = new Date(datenow.getFullYear(), datenow.getMonth(), datenow.getDate(), datenow.getHours(), datenow.getMinutes(), 0, 0);
+    const date = new Date(datenow.getFullYear(), datenow.getMonth(), datenow.getDate(), datenow.getHours(), datenow.getMinutes(), 0, 0);
     return date.toISOString();
 }
 exports.default = default_1;
 function getMonthFromString(month1) {
-    var months = [
+    const months = [
         'янв',
         'фев',
         'мар',

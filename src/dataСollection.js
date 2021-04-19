@@ -14,7 +14,9 @@ const toIssoString_1 = require("./toIssoString");
 const tesseract_1 = require("./tesseract");
 function dataCollection(setting, page, puppeteer, sessid) {
     return __awaiter(this, void 0, void 0, function* () {
-        let flag = true, counter = 1, data = [];
+        let flag = true;
+        let counter = 1;
+        let data = [];
         const passAuthorization = setting.passAuthorization;
         const cluster = yield Cluster.launch({
             puppeteerOptions: {
@@ -108,13 +110,14 @@ function dataCollection(setting, page, puppeteer, sessid) {
                 data[data.length - 1].date = toIssoString_1.default(data[data.length - 1].date);
                 if (passAuthorization && !errorPhone)
                     data[data.length - 1].phone = yield tesseract_1.default(data[data.length - 1].phone);
-                console.log((yield page.url()) + "данные со страницы получены");
+                console.log((yield page.url()) + " данные со страницы получены");
             }
             catch (e) {
                 console.log(e);
                 console.log('ошибка у окна ' + (yield page.url()));
             }
             finally {
+                console.log(data[data.length - 1].phone);
             }
         }));
         if (setting.maxContent <= 0) {

@@ -20,7 +20,7 @@ function startPuppeteer() {
         let data = [];
         puppeteer.use(StealthPlugin({}));
         const browser = yield puppeteer.launch(setting.browser);
-        let page = yield browser.newPage();
+        const page = yield browser.newPage();
         yield page.setBypassCSP(true);
         let sessid;
         try {

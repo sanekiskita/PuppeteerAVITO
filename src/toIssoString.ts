@@ -4,9 +4,9 @@
  * @return дату в формате ISO-8601.
  */
 export default function (strdate) {
-    let arrdate = strdate.split(' ');
+    const arrdate = strdate.split(' ');
     arrdate.push(arrdate.pop().split(':'));
-    let index = arrdate.indexOf('в');
+    const index = arrdate.indexOf('в');
     if (index > -1) arrdate.splice(index, 1);
 
     const datenow = new Date();
@@ -27,8 +27,7 @@ export default function (strdate) {
             datenow.setHours(arrdate[2][0]);
             datenow.setMinutes(arrdate[2][1]);
     }
-
-    let date = new Date(
+    const date = new Date(
         datenow.getFullYear(),
         datenow.getMonth(),
         datenow.getDate(),
@@ -37,12 +36,11 @@ export default function (strdate) {
         0,
         0
     );
-
     return date.toISOString();
 }
 
 function getMonthFromString(month1: string): number {
-    var months = [
+    const months = [
         'янв',
         'фев',
         'мар',

@@ -16,7 +16,7 @@ interface Advert {
     phone: string;
 }
 
-interface ArrayAdvert extends Array<Advert> {}
+type ArrayAdvert = Array<Advert>
 /**
  * Возвращает массив с данными.
  *
@@ -26,7 +26,7 @@ export default async function startPuppeteer() {
     let data: ArrayAdvert = [];
     puppeteer.use(StealthPlugin({}));
     const browser = await puppeteer.launch(setting.browser);
-    let page = await browser.newPage();
+    const page = await browser.newPage();
     await page.setBypassCSP(true);
     let sessid;
     try {
@@ -38,9 +38,9 @@ export default async function startPuppeteer() {
         if (!!setting.password.length||!!setting.login.length) {
              sessid = await authorization(page, setting.login, setting.password);
         }
-        else throw new Error("Логин или пароль отсутствуют");   
+        else throw new Error("Логин или пароль отсутствуют");
         }
-        data = await dataСollection(setting, page, puppeteer, sessid);        
+        data = await dataСollection(setting, page, puppeteer, sessid);
     } catch (e) {
         console.log(e);
     } finally {

@@ -1,15 +1,14 @@
-//import randomInteger from './randomInteger'
 
 /**
  * авторизация на сайте.
  *
  * @param  login логин.
  * @param  password пароль.
- * @return sessid - id подключения 
+ * @return sessid - id подключения
  */
 export default async function authorization (page , login: string , password: string ) {
-    let sessid:String;
-    let aut:boolean = false;
+    let sessid:string;
+    let aut = false;
     try{
 
     await page.click("a[data-marker='header/login-button']");
@@ -32,20 +31,20 @@ export default async function authorization (page , login: string , password: st
         const cookies = await page.cookies(
           "https://www.avito.ru"
         );
-        
+
         if (
-          cookies.filter((item: { name: string; value: string; }) => item.name == "auth" && item.value == "1")
-            .length && cookies.filter((item: { name: string; value: string; }) => item.name == "sessid")
+          cookies.filter((item: { name: string; value: string; }) => item.name === "auth" && item.value === "1")
+            .length && cookies.filter((item: { name: string; value: string; }) => item.name === "sessid")
             .length
         ){
           aut = true;
-          sessid=cookies.filter((item: { name: string; value: string; }) => item.name == "sessid")[0].value;
+          sessid=cookies.filter((item: { name: string; value: string; }) => item.name === "sessid")[0].value;
           console.log("sessid:"+sessid);
           }else{
             console.log("авторизация не прошла!!!");
           }
 
-      } while (!aut);   
+      } while (!aut);
       console.log("авторизация прошла");
       return sessid;
     }catch(e){

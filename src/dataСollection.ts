@@ -24,15 +24,15 @@ interface ArrayAdvert extends Array<Advert> {}
  * @return  массив с данными
  */
 export default async function dataCollection(setting, page, puppeteer,sessid) {
-    let flag: boolean = true,
-        counter: number = 1,
-        data: ArrayAdvert = [];
+    let flag: boolean = true
+    let counter: number = 1;
+    let data: ArrayAdvert = [];
     const passAuthorization = setting.passAuthorization;
 
     const cluster = await Cluster.launch({
         puppeteerOptions: {
             headless: false,
-            defaultViewport: null, 
+            defaultViewport: null,
         },
         puppeteer,
         concurrency: Cluster.CONCURRENCY_PAGE,
@@ -95,7 +95,7 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
                         ) as HTMLElement).innerText.replace(/\s/g, '').slice(0, -1);
                         console.log(zaprPrice);
                         const price = isNaN(Number(zaprPrice))
-                        ? 0 :Number(zaprPrice);           
+                        ? 0 :Number(zaprPrice);
                                 const title: string = ((document.querySelector('.title-info-title-text')) as HTMLElement).innerText;
                                 const description: string = ((document.querySelector('.item-description')) as HTMLElement).innerText;
                                 const author: string = ((document.querySelector('.seller-info-name')) as HTMLElement).innerText;
@@ -132,12 +132,13 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
                         data[data.length - 1].phone = await startTesseract(
                             data[data.length - 1].phone
                         );
-                    console.log(await page.url()+"данные со страницы получены");
+                    console.log(await page.url()+" данные со страницы получены");
 
                 } catch (e) {
                     console.log(e);
                     console.log('ошибка у окна '+ await page.url());
                 } finally {
+                    console.log(data[data.length - 1].phone);
                 }
       });
 
@@ -171,7 +172,7 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
         const elements = await page.$$(
             'div[data-marker=catalog-serp] > div[data-marker=item] a[data-marker=item-title]'
         );
-        let aHref:String;
+        let aHref:string;
         for (let i = 0; i < elements.length; i++) {
             console.log('элемент - ' + (i + 1) + 'из ' + elements.length);
             aHref = await page.evaluate(a => a.getAttribute('href'), elements[i]);
