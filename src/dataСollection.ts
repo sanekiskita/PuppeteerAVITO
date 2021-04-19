@@ -132,7 +132,7 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
                         data[data.length - 1].phone = await startTesseract(
                             data[data.length - 1].phone
                         );
-                    console.log(await page.url().phone+"данные со страницы получены");
+                    console.log(await page.url()+"данные со страницы получены");
 
                 } catch (e) {
                     console.log(e);

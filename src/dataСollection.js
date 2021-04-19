@@ -108,7 +108,7 @@ function dataCollection(setting, page, puppeteer, sessid) {
                 data[data.length - 1].date = toIssoString_1.default(data[data.length - 1].date);
                 if (passAuthorization && !errorPhone)
                     data[data.length - 1].phone = yield tesseract_1.default(data[data.length - 1].phone);
-                console.log((yield page.url().phone) + "данные со страницы получены");
+                console.log((yield page.url()) + "данные со страницы получены");
             }
             catch (e) {
                 console.log(e);
