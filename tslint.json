@@ -1,8 +1,15 @@
 {
-    "extends": "tslint:recommended",
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
     "rules": {
-      "no-var-requires":false,
-      "no-console":false,
-      "no-shadowed-variable":false
-    }
-  }
+        "no-var-requires":false,
+        "no-shadowed-variable":false,
+        "no-console":false,
+        "ter-indent": [true, 4],
+        "indent": [true, "spaces", 4]
+    },
+    "rulesDirectory": []
+}

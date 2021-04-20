@@ -24,7 +24,10 @@ function dataCollection(setting, page, puppeteer, sessid) {
             concurrency: Cluster.CONCURRENCY_PAGE,
             maxConcurrency: 4,
             timeout: 500000,
-            monitor: true
+            monitor: true,
+            retryLimit: 1,
+            retryDelay: 5000,
+            workerCreationDelay: 100
         });
         if (passAuthorization) {
             const Cookie = ({ page, data: sessid }) => __awaiter(this, void 0, void 0, function* () {
@@ -40,8 +43,13 @@ function dataCollection(setting, page, puppeteer, sessid) {
                     console.log(e);
                 }
             });
-            yield cluster.queue(sessid, Cookie);
-            yield cluster.idle();
+            try {
+                yield cluster.queue(sessid, Cookie);
+                yield cluster.idle();
+            }
+            catch (e) {
+                throw new Error("Куки не установленны");
+            }
         }
         yield cluster.task(({ page, data: dataArray }) => __awaiter(this, void 0, void 0, function* () {
             try {
@@ -116,46 +124,48 @@ function dataCollection(setting, page, puppeteer, sessid) {
                 throw new Error(e.message + " " + dataArray.url);
             }
         }));
-        cluster.on('taskerror', (err, data) => {
+        cluster.on('taskerror', (err, data, willRetry = true) => {
             console.log(`${err.message}`);
         });
-        if (setting.maxContent <= 0) {
-            setting.maxContent = +(yield page.evaluate(() => {
-                return +(document.querySelector('div.js-pages > div:nth-child(1) > span:nth-child(8)')).innerText;
-            }));
-        }
-        else {
-            if (setting.maxContent >
-                (yield page.evaluate(() => {
-                    return +(document.querySelector('div.js-pages > div:nth-child(1) > span:nth-child(8)')).innerText;
-                }))) {
-                setting.maxContent = yield page.evaluate(() => {
-                    return +(document.querySelector('div.js-pages > div:nth-child(1) > span:nth-child(8)')).innerText;
-                });
-            }
-        }
         try {
+            if (setting.maxContent <= 0) {
+                setting.maxContent = +(yield page.evaluate(() => {
+                    return +(document.querySelector('div.js-pages > div:nth-child(1) > span:nth-child(8)')).innerText;
+                }));
+            }
+            else {
+                if (setting.maxContent >
+                    (yield page.evaluate(() => {
+                        return +(document.querySelector('div.js-pages > div:nth-child(1) > span:nth-child(8)')).innerText;
+                    }))) {
+                    setting.maxContent = yield page.evaluate(() => {
+                        return +(document.querySelector('div.js-pages > div:nth-child(1) > span:nth-child(8)')).innerText;
+                    });
+                }
+            }
             while (flag) {
                 yield page.goto(`${setting.link}${counter}`, {
-                    waitUntil: 'load',
+                    waitUntil: 'domcontentloaded',
                     timeout: 0,
                 });
                 yield page.waitForSelector('div.js-pages > div:nth-child(1) > span:nth-child(8)');
                 const elements = yield page.$$('div[data-marker=catalog-serp] > div[data-marker=item] a[data-marker=item-title]');
                 let aHref;
-                for (let i = 0; i < 30; i++) {
-                    aHref = yield page.evaluate(a => a.getAttribute('href'), elements[i]);
+                elements.forEach((element) => __awaiter(this, void 0, void 0, function* () {
+                    aHref = yield page.evaluate(a => a.getAttribute('href'), element);
                     cluster.queue({ 'url': `https://www.avito.ru${aHref}`, 'sessid': sessid });
-                }
+                }));
                 flag = setting.maxContent === counter ? false : true;
                 counter += 1;
             }
+            yield cluster.idle();
+            yield cluster.close();
         }
         catch (e) {
+            console.log(e);
             console.log("ошибка кластера");
+            yield cluster.close();
         }
-        yield cluster.idle();
-        yield cluster.close();
         return data;
     });
 }
