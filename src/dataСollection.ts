@@ -24,16 +24,13 @@ type ArrayAdvert = Advert[];
  * @return  массив с данными
  */
 export default async function dataCollection(setting, page, puppeteer,sessid) {
-    let flag: boolean = true
+    let flag: boolean = true;
     let counter: number = 1;
     const data: ArrayAdvert = [];
     const passAuthorization = setting.passAuthorization;
 
     const cluster = await Cluster.launch({
-        puppeteerOptions: {
-            headless: false,
-            defaultViewport: null,
-        },
+        puppeteerOptions : setting.browser,
         puppeteer,
         concurrency: Cluster.CONCURRENCY_PAGE,
         maxConcurrency: 4,

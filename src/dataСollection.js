@@ -19,10 +19,7 @@ function dataCollection(setting, page, puppeteer, sessid) {
         const data = [];
         const passAuthorization = setting.passAuthorization;
         const cluster = yield Cluster.launch({
-            puppeteerOptions: {
-                headless: false,
-                defaultViewport: null,
-            },
+            puppeteerOptions: setting.browser,
             puppeteer,
             concurrency: Cluster.CONCURRENCY_PAGE,
             maxConcurrency: 4,
