@@ -17,6 +17,12 @@
 
 ## Программа сама проходит авторизацию ✓
 
+## Работа прокси
+ :heavy_exclamation_mark::heavy_exclamation_mark::heavy_exclamation_mark:Используется бесплатный прокси:heavy_exclamation_mark::heavy_exclamation_mark::heavy_exclamation_mark:
+![Proxy](https://user-images.githubusercontent.com/56951952/115425408-453d1080-a208-11eb-93dc-fc365688cfc5.PNG)
+
+
+
 запуск:
 1. npm install
 2. node index.js
