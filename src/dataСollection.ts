@@ -34,7 +34,8 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
         puppeteer,
         concurrency: Cluster.CONCURRENCY_PAGE,
         maxConcurrency: 4,
-        timeout: 500000
+        timeout: 500000,
+        monitor: true
       });
 
       if(passAuthorization){
@@ -59,11 +60,12 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
     await cluster.task(async ({page,data: dataArray }) => {
         try {
         try{
-            await page.setDefaultNavigationTimeout(0);
-            await page.goto(dataArray.url, {waitUntil: 'load'});
+            await page.setDefaultNavigationTimeout(50000);
+            await page.goto(dataArray.url, {waitUntil: 'domcontentloaded'});
         }catch(e){
-            throw e;
+            throw new Error('Ошибка загрузки');
         }
+        try{
                     let errorPhone = 0;
                     if (passAuthorization) {
                         try {
@@ -78,13 +80,13 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
                                 );
                             } catch {
                                 errorPhone = 2;
-                                console.log('номер временно скрыт');
+                                // console.log('номер временно скрыт');
                             }
                         } catch {
                             errorPhone = 1;
-                            console.log(
+                            /*console.log(
                                 'пользователь запретил просмотр телефона'
-                            );
+                            );*/
                         }
                     }
                     data.push(await page.evaluate(({ passAuthorization, errorPhone }) => {
@@ -129,15 +131,18 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
                         data[data.length - 1].phone = await startTesseract(
                             data[data.length - 1].phone
                         );
-                    console.log(await page.url()+" данные со страницы получены");
-
+                        }catch(e)
+                        {
+                            throw new Error('Ошибка в обработке данных');
+                        }
                 } catch (e) {
-                    console.log(e);
-                    console.log('ошибка у окна '+ await page.url());
-                } finally {
-                    console.log("phone "+data[data.length - 1].phone);
+                    throw new Error(e.message +" "+dataArray.url);
                 }
       });
+
+      cluster.on('taskerror', (err, data) => {
+        console.log(`${err.message}`);
+    });
 
       if (setting.maxContent <= 0) {
         setting.maxContent = +(await page.evaluate((): number => {
@@ -156,8 +161,8 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
         }
     }
 
+    try{
     while (flag) {
-        console.log('страница - ' + counter + 'из' + setting.maxContent);
         await page.goto(`${setting.link}${counter}`, {
             waitUntil: 'load',
             timeout: 0,
@@ -170,15 +175,18 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
             'div[data-marker=catalog-serp] > div[data-marker=item] a[data-marker=item-title]'
         );
         let aHref:string;
-        for (let i = 0; i < elements.length; i++) {
-            console.log('элемент - ' + (i + 1) + 'из ' + elements.length);
+        for (let i = 0; i < 30; i++) {
             aHref = await page.evaluate(a => a.getAttribute('href'), elements[i]);
             cluster.queue({'url' : `https://www.avito.ru${aHref}`, 'sessid':sessid});
         }
         flag = setting.maxContent === counter ? false : true;
         counter += 1;
     }
+    }catch(e){
+        console.log("ошибка кластера");
+    }
     await cluster.idle();
     await cluster.close();
     return data;
+
 }
