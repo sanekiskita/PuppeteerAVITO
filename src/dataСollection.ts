@@ -35,7 +35,11 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
         concurrency: Cluster.CONCURRENCY_PAGE,
         maxConcurrency: 4,
         timeout: 500000,
-        monitor: true
+        monitor: true,
+        retryLimit:1,
+        retryDelay:5000, // через сколько возвращаться  к заданию после провала
+        // sameDomainDelay:0, // ожидание между запросами к одному домену
+        workerCreationDelay:100 // задержка между потоками
       });
 
       if(passAuthorization){
@@ -51,12 +55,12 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
         console.log(e);
     }
     }
-    await cluster.queue(sessid,Cookie);
-    await cluster.idle();
+    try{    await cluster.queue(sessid,Cookie);
+        await cluster.idle();
+    }catch(e){throw new Error("Куки не установленны");
+    }
+
 }
-
-
-
     await cluster.task(async ({page,data: dataArray }) => {
         try {
         try{
@@ -90,7 +94,7 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
                         }
                     }
                     data.push(await page.evaluate(({ passAuthorization, errorPhone }) => {
-                        const zaprPrice = ((document.querySelector('div.item-price span.price-value-string')
+                           const zaprPrice = ((document.querySelector('div.item-price span.price-value-string')
                         ) as HTMLElement).innerText.replace(/\s/g, '').slice(0, -1);
                         console.log(zaprPrice);
                         const price = isNaN(Number(zaprPrice))
@@ -140,10 +144,11 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
                 }
       });
 
-      cluster.on('taskerror', (err, data) => {
+      cluster.on('taskerror', (err, data,willRetry=true) => {
         console.log(`${err.message}`);
     });
 
+      try{
       if (setting.maxContent <= 0) {
         setting.maxContent = +(await page.evaluate((): number => {
             return +((document.querySelector('div.js-pages > div:nth-child(1) > span:nth-child(8)')) as HTMLElement).innerText;
@@ -161,10 +166,9 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
         }
     }
 
-    try{
     while (flag) {
         await page.goto(`${setting.link}${counter}`, {
-            waitUntil: 'load',
+            waitUntil: 'domcontentloaded',
             timeout: 0,
         });
 
@@ -175,18 +179,21 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
             'div[data-marker=catalog-serp] > div[data-marker=item] a[data-marker=item-title]'
         );
         let aHref:string;
-        for (let i = 0; i < 30; i++) {
-            aHref = await page.evaluate(a => a.getAttribute('href'), elements[i]);
+
+        elements.forEach(async element => {
+            aHref = await page.evaluate(a => a.getAttribute('href'), element);
             cluster.queue({'url' : `https://www.avito.ru${aHref}`, 'sessid':sessid});
-        }
+        });
         flag = setting.maxContent === counter ? false : true;
         counter += 1;
     }
-    }catch(e){
-        console.log("ошибка кластера");
-    }
     await cluster.idle();
     await cluster.close();
+    }catch(e){
+        console.log(e);
+        console.log("ошибка кластера");
+        await cluster.close();
+    }
     return data;
 
 }
