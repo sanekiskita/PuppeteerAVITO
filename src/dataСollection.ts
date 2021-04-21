@@ -42,6 +42,10 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
         workerCreationDelay:100 // задержка между потоками
       });
 
+      cluster.on('taskerror', (err, data,willRetry=true) => {
+        console.log(`${err.message}`);
+    });
+
       if(passAuthorization){
     const Cookie =  async({page,data: sessid }) => {
         try{
@@ -151,10 +155,6 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
                     throw new Error(e.message +" "+dataArray.url);
                 }
       });
-
-      cluster.on('taskerror', (err, data,willRetry=true) => {
-        console.log(`${err.message}`);
-    });
 
       try{
       if (setting.maxContent <= 0) {

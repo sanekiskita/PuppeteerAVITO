@@ -29,6 +29,9 @@ function dataCollection(setting, page, puppeteer, sessid) {
             retryDelay: 5000,
             workerCreationDelay: 100
         });
+        cluster.on('taskerror', (err, data, willRetry = true) => {
+            console.log(`${err.message}`);
+        });
         if (passAuthorization) {
             const Cookie = ({ page, data: sessid }) => __awaiter(this, void 0, void 0, function* () {
                 try {
@@ -133,9 +136,6 @@ function dataCollection(setting, page, puppeteer, sessid) {
                 throw new Error(e.message + " " + dataArray.url);
             }
         }));
-        cluster.on('taskerror', (err, data, willRetry = true) => {
-            console.log(`${err.message}`);
-        });
         try {
             if (setting.maxContent <= 0) {
                 setting.maxContent = +(yield page.evaluate(() => {
