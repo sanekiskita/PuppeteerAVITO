@@ -31,9 +31,17 @@ export default async function startPuppeteer() {
     let sessid;
     try {
         await page.goto(setting.link, {
-            waitUntil: 'load',
+            waitUntil: 'domcontentloaded',
             timeout: 0,
         });
+        let error;
+        try{
+        error = await page.evaluate(() => {
+            return document.querySelector('h2.firewall-title').textContent;
+        })}catch(e){}
+
+        if(!!error)
+        throw new Error(error);
         if(setting.passAuthorization){
         if (!!setting.password.length||!!setting.login.length) {
              sessid = await authorization(page, setting.login, setting.password);

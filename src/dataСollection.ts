@@ -66,6 +66,14 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
         try{
             await page.setDefaultNavigationTimeout(50000);
             await page.goto(dataArray.url, {waitUntil: 'domcontentloaded'});
+            let error;
+            try{
+            error = await page.evaluate(() => {
+                return document.querySelector('h2.firewall-title').textContent;
+            })}catch(e){}
+
+            if(!!error)
+            throw new Error(error);
         }catch(e){
             throw new Error('Ошибка загрузки');
         }
@@ -167,6 +175,7 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
     }
 
     while (flag) {
+         if(`${setting.link}${counter}`!==`${page.url()}`)
         await page.goto(`${setting.link}${counter}`, {
             waitUntil: 'domcontentloaded',
             timeout: 0,
@@ -189,6 +198,7 @@ export default async function dataCollection(setting, page, puppeteer,sessid) {
     }
     await cluster.idle();
     await cluster.close();
+    console.log("Выход");
     }catch(e){
         console.log(e);
         console.log("ошибка кластера");

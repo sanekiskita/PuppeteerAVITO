@@ -56,6 +56,15 @@ function dataCollection(setting, page, puppeteer, sessid) {
                 try {
                     yield page.setDefaultNavigationTimeout(50000);
                     yield page.goto(dataArray.url, { waitUntil: 'domcontentloaded' });
+                    let error;
+                    try {
+                        error = yield page.evaluate(() => {
+                            return document.querySelector('h2.firewall-title').textContent;
+                        });
+                    }
+                    catch (e) { }
+                    if (!!error)
+                        throw new Error(error);
                 }
                 catch (e) {
                     throw new Error('Ошибка загрузки');
@@ -144,10 +153,11 @@ function dataCollection(setting, page, puppeteer, sessid) {
                 }
             }
             while (flag) {
-                yield page.goto(`${setting.link}${counter}`, {
-                    waitUntil: 'domcontentloaded',
-                    timeout: 0,
-                });
+                if (`${setting.link}${counter}` !== `${page.url()}`)
+                    yield page.goto(`${setting.link}${counter}`, {
+                        waitUntil: 'domcontentloaded',
+                        timeout: 0,
+                    });
                 yield page.waitForSelector('div.js-pages > div:nth-child(1) > span:nth-child(8)');
                 const elements = yield page.$$('div[data-marker=catalog-serp] > div[data-marker=item] a[data-marker=item-title]');
                 let aHref;
@@ -160,6 +170,7 @@ function dataCollection(setting, page, puppeteer, sessid) {
             }
             yield cluster.idle();
             yield cluster.close();
+            console.log("Выход");
         }
         catch (e) {
             console.log(e);

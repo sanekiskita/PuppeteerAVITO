@@ -25,9 +25,18 @@ function startPuppeteer() {
         let sessid;
         try {
             yield page.goto(setting.link, {
-                waitUntil: 'load',
+                waitUntil: 'domcontentloaded',
                 timeout: 0,
             });
+            let error;
+            try {
+                error = yield page.evaluate(() => {
+                    return document.querySelector('h2.firewall-title').textContent;
+                });
+            }
+            catch (e) { }
+            if (!!error)
+                throw new Error(error);
             if (setting.passAuthorization) {
                 if (!!setting.password.length || !!setting.login.length) {
                     sessid = yield authorization_1.default(page, setting.login, setting.password);
